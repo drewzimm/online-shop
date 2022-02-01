@@ -55,8 +55,21 @@ async function updateProduct(req, res, next) {
     next(error);
     return;
   }
-  
+
   res.redirect('/admin/products');
+}
+
+async function deleteProduct(req, res, next) {
+  let product;
+  try {
+    product = await Product.findById(req.params.id);
+    await product.remove();
+  } catch (error) {
+    return next(error);
+  }
+
+  // res.redirect('/admin/products'); can't redirect when using ajax
+  res.json({ message: 'Deleted Product!' });
 }
 
 module.exports = {
@@ -65,4 +78,5 @@ module.exports = {
   createNewProduct: createNewProduct,
   getUpdateProduct: getUpdateProduct,
   updateProduct: updateProduct,
+  deleteProduct: deleteProduct,
 };
