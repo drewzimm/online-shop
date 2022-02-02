@@ -23,10 +23,7 @@ class Product {
       error.code = 404;
       throw error;
     }
-    const product = await db
-      .getDb()
-      .collection('products')
-      .findOne({ _id: prodId });
+    const product = await db.getDb().collection('products').findOne({ _id: prodId });
 
     if (!product) {
       const error = new Error('Could not find product with provided id.');
@@ -40,6 +37,25 @@ class Product {
   static async findAll() {
     const products = await db.getDb().collection('products').find().toArray();
 
+    return products.map(function (productDocument) {
+      return new Product(productDocument);
+    });
+  }
+
+  /* converts ids into mongodb instances */
+  static async findMultiple(ids) {
+    const productIds = ids.map(function (id) {
+      return new mongodb.ObjectId(id);
+    });
+
+    // find products that match an id in productsIds array
+    const products = await db
+      .getDb()
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray();
+
+      // turn into product objects
     return products.map(function (productDocument) {
       return new Product(productDocument);
     });
@@ -82,7 +98,7 @@ class Product {
     this.updateImageData();
   }
 
-  async remove() {
+  remove() {
     const productId = new mongodb.ObjectId(this.id);
     return db.getDb().collection('products').deleteOne({ _id: productId });
   }

@@ -111,8 +111,7 @@ async function login(req, res) {
   }
 
   const sessionErrorData = {
-    errorMessage:
-      'Invalid credentials. Please recheck your email and password!',
+    errorMessage: 'Invalid credentials. Please recheck your email and password!',
     email: user.email,
     password: user.password,
   };
